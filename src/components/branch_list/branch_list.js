@@ -2,19 +2,46 @@ import React, { Component } from "react";
 import { View, Text, SectionList } from "react-native";
 import ListHeader from "./list_header";
 import ListItem from "./list_item";
+import { NearestCity } from "./closest_location.js";
 
 export default class BranchList extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { branchList: [] };
+		this.state = {
+			branchList: [],
+			nearest: [],
+			latitude: null,
+			longitude: null,
+			error: null
+		};
 	}
 
 	componentDidMount() {
 		console.log("Component did mount");
 		this.fetchBranchList().then(branchList => {
 			this.setState({ branchList: branchList });
+
+			// create locations array from branchList array to find the nearest branch
+			let locations = branchList.map(branch => [
+				branch.branchDesc,
+				branch.branchYaxis,
+				branch.branchXaxis,
+				branch
+			]);
+
+			console.log(locations);
+
+			let closestLocation = NearestCity(
+				25.2539561,
+				55.3325269,
+				locations
+			);
+			console.log("Closest location: ", closestLocation);
+			this.setState({ nearest: [closestLocation[3]] });
 		});
+
+		this.getCurrentLocation();
 	}
 
 	render() {
@@ -28,16 +55,12 @@ export default class BranchList extends Component {
 				)}
 				sections={[
 					{
-						title: "Title1",
+						title: "Nearby",
+						data: this.state.nearest
+					},
+					{
+						title: "Our other locations",
 						data: this.state.branchList
-					},
-					{
-						title: "Title2",
-						data: [{ title: "item3" }, { title: "item4" }]
-					},
-					{
-						title: "Title3",
-						data: [{ title: "item5" }, { title: "item6" }]
 					}
 				]}
 				keyExtractor={(item, index) => item + index}
@@ -77,5 +100,23 @@ export default class BranchList extends Component {
 			.catch(error => {
 				console.error(error);
 			});
+	}
+
+	getCurrentLocation() {
+		navigator.geolocation.getCurrentPosition(
+			position => {
+				console.log("Retrieved the current location");
+				this.setState({
+					latitude: position.coords.latitude,
+					longitude: position.coords.longitude,
+					error: null
+				});
+			},
+			error => {
+				console.log("Error getting the location.");
+				this.setState({ error: error.message });
+			},
+			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+		);
 	}
 }
