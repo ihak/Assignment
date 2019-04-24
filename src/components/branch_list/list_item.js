@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 
 export default class ListItem extends Component {
 	render() {
-		let { item } = this.props;
+		let { item, onPress } = this.props;
 
 		return (
-			<View>
-				<Text>{item.branchDesc}</Text>
-			</View>
+			<TouchableOpacity onPress={() => onPress(item)}>
+				<View>
+					<Text>{item.branchDesc}</Text>
+				</View>
+			</TouchableOpacity>
 		);
 	}
 }

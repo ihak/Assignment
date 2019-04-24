@@ -10,9 +10,8 @@ import React, { Component } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
-import MapTest from "./src/components/maptest";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import BranchList from "./src/components/branch_list/branch_list";
+import BranchDetail from "./src/components/branch_detail";
 
 const instructions = Platform.select({
   ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
@@ -22,6 +21,7 @@ const instructions = Platform.select({
 });
 
 const AppNavigator = createStackNavigator({
+  BranchDetail: BranchDetail,
   BranchList: BranchList
 });
 

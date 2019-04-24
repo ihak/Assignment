@@ -5,6 +5,10 @@ import ListItem from "./list_item";
 import { NearestCity } from "./closest_location.js";
 
 export default class BranchList extends Component {
+	static navigationOptions = {
+		title: "Our Locations"
+	};
+
 	constructor(props) {
 		super(props);
 
@@ -48,7 +52,15 @@ export default class BranchList extends Component {
 		return (
 			<SectionList
 				renderItem={({ item, index, section }) => (
-					<ListItem item={item} />
+					<ListItem
+						item={item}
+						onPress={item =>
+							this.props.navigation.navigate("BranchDetail", {
+								item: item,
+								title: item.branchDesc
+							})
+						}
+					/>
 				)}
 				renderSectionHeader={({ section: { title } }) => (
 					<ListHeader title={title} />
