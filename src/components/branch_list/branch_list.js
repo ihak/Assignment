@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, SectionList } from "react-native";
+import { StyleSheet, View, Text, SectionList } from "react-native";
 import ListHeader from "./list_header";
 import ListItem from "./list_item";
 import { NearestCity } from "./closest_location.js";
@@ -51,6 +51,7 @@ export default class BranchList extends Component {
 	render() {
 		return (
 			<SectionList
+				style={styles.container}
 				renderItem={({ item, index, section }) => (
 					<ListItem
 						item={item}
@@ -132,3 +133,9 @@ export default class BranchList extends Component {
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	container: {
+		backgroundColor: "#F6F6F6"
+	}
+});

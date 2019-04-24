@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
 export default class ListHeader extends Component {
 	render() {
@@ -7,8 +7,13 @@ export default class ListHeader extends Component {
 
 		return (
 			<View>
-				<Text>{title}</Text>
+				<Text style={styles.title}>{title}</Text>
 			</View>
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	container: {},
+	title: { padding: 10, fontWeight: "bold", fontSize: 12, color: "grey" }
+});

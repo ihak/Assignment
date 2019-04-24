@@ -21,8 +21,8 @@ const instructions = Platform.select({
 });
 
 const AppNavigator = createStackNavigator({
-  BranchDetail: BranchDetail,
-  BranchList: BranchList
+  BranchList: BranchList,
+  BranchDetail: BranchDetail
 });
 
 const AppContainer = createAppContainer(AppNavigator);
