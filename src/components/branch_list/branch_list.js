@@ -25,7 +25,12 @@ export default class BranchList extends Component {
 	componentDidMount() {
 		console.log("Component did mount");
 		this.fetchBranchList().then(branchList => {
-			this.setState({ branchList: branchList });
+			console.log(branchList);
+
+			// If no branches present exit the function
+			if (branchList.length <= 0) {
+				return;
+			}
 
 			// create locations array from branchList array to find the nearest branch
 			let locations = branchList.map(branch => [
@@ -35,19 +40,18 @@ export default class BranchList extends Component {
 				branch
 			]);
 
-			console.log(locations);
-
 			let closestLocation = NearestCity(
 				25.2539561,
 				55.3325269,
 				locations
 			);
+
 			console.log("Closest location: ", closestLocation);
-			this.setState({ nearest: [closestLocation[3]] });
+
 			this.setState({
 				sections: [
-					{ title: 'Nearby', data: [closestLocation[3]]},
-					{ title: 'Our other locations', data: branchList}
+					{ title: "Nearby", data: [closestLocation[3]] },
+					{ title: "Our other locations", data: branchList }
 				]
 			});
 		});
@@ -102,11 +106,24 @@ export default class BranchList extends Component {
 				})
 			}
 		)
-			.then(response => response.json())
+			.then(response => {
+				// Check for the response else return empty object
+				if (response.ok) {
+					return response.json();
+				} else {
+					return {};
+				}
+			})
 			.then(responseJson => {
 				console.log(responseJson);
-
-				return responseJson.branchList;
+				if (
+					responseJson.statusCode !== undefined &&
+					responseJson.statusCode == 999
+				) {
+					return responseJson.branchList;
+				} else {
+					return [];
+				}
 			})
 			.catch(error => {
 				console.error(error);
