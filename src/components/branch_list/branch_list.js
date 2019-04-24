@@ -5,6 +5,7 @@ import ListItem from "./list_item";
 import { NearestCity } from "./closest_location.js";
 
 export default class BranchList extends Component {
+	// Set navigation title
 	static navigationOptions = {
 		title: "Our Locations"
 	};
@@ -12,6 +13,7 @@ export default class BranchList extends Component {
 	constructor(props) {
 		super(props);
 
+		// Set initial state of the component
 		this.state = {
 			sections: [{ title: "Loading...", data: [] }],
 			branchList: [],
@@ -24,6 +26,8 @@ export default class BranchList extends Component {
 
 	componentDidMount() {
 		console.log("Component did mount");
+
+		// Fetch branch list from webservice
 		this.fetchBranchList().then(branchList => {
 			console.log(branchList);
 
@@ -32,7 +36,8 @@ export default class BranchList extends Component {
 				return;
 			}
 
-			// create locations array from branchList array to find the nearest branch
+			// create locations array from branchList array to find the 
+			// nearest branch
 			let locations = branchList.map(branch => [
 				branch.branchDesc,
 				branch.branchYaxis,
@@ -41,8 +46,8 @@ export default class BranchList extends Component {
 			]);
 
 			let closestLocation = NearestCity(
-				25.2539561,
-				55.3325269,
+				parseFloat(this.state.latitude),
+				parseFloat(this.state.longitude),
 				locations
 			);
 
@@ -83,6 +88,8 @@ export default class BranchList extends Component {
 		);
 	}
 
+	// Fetch api call which returns a promise
+	// with response json object
 	fetchBranchList() {
 		return fetch(
 			"https://customtst.awrostamani.ae/AWRMobileRestAPIProxy/resources/branchProxyService/getBranchListProxyeService",
@@ -130,10 +137,13 @@ export default class BranchList extends Component {
 			});
 	}
 
+	// Retrieves current location of the user
 	getCurrentLocation() {
 		navigator.geolocation.getCurrentPosition(
 			position => {
 				console.log("Retrieved the current location");
+
+				// Save the location in state
 				this.setState({
 					latitude: position.coords.latitude,
 					longitude: position.coords.longitude,
