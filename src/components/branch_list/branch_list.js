@@ -13,6 +13,7 @@ export default class BranchList extends Component {
 		super(props);
 
 		this.state = {
+			sections: [{ title: "Loading...", data: [] }],
 			branchList: [],
 			nearest: [],
 			latitude: null,
@@ -43,6 +44,12 @@ export default class BranchList extends Component {
 			);
 			console.log("Closest location: ", closestLocation);
 			this.setState({ nearest: [closestLocation[3]] });
+			this.setState({
+				sections: [
+					{ title: 'Nearby', data: [closestLocation[3]]},
+					{ title: 'Our other locations', data: branchList}
+				]
+			});
 		});
 
 		this.getCurrentLocation();
@@ -66,16 +73,7 @@ export default class BranchList extends Component {
 				renderSectionHeader={({ section: { title } }) => (
 					<ListHeader title={title} />
 				)}
-				sections={[
-					{
-						title: "Nearby",
-						data: this.state.nearest
-					},
-					{
-						title: "Our other locations",
-						data: this.state.branchList
-					}
-				]}
+				sections={this.state.sections}
 				keyExtractor={(item, index) => item + index}
 			/>
 		);
