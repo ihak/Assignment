@@ -28,7 +28,7 @@ export default class ListItem extends Component {
 
 const styles = StyleSheet.create({
 	container: { backgroundColor: "white", padding: 0 },
-	content: {flexDirection: "row", justifyContent: "flex-start" },
+	content: { flexDirection: "row", justifyContent: "flex-start" },
 	text: {
 		flex: 1,
 		padding: 20,

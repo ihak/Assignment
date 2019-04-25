@@ -31,11 +31,14 @@ export default class BranchList extends Component {
 		// Fetch branch list from webservice
 		this.fetchBranchList().then(branchList => {
 			console.log(branchList);
+			// update the state object and calculate the nearest
+			// branch afterwards
 			this.setState({ branchList }, () =>
 				this.calculateNearestLocation()
 			);
 		});
 
+		// request for user's current location
 		this.getCurrentLocation();
 	}
 
@@ -48,6 +51,8 @@ export default class BranchList extends Component {
 					<ListItem
 						item={item}
 						onPress={item =>
+							// navigate to the detail screen with item object
+							// and title for navigation
 							this.props.navigation.navigate("BranchDetail", {
 								item: item,
 								title: item.branchDesc
@@ -138,6 +143,7 @@ export default class BranchList extends Component {
 		);
 	}
 
+	// calculates the nearest location and upate the state accordingly
 	calculateNearestLocation() {
 		// If latitude is present calculate nearest location
 		if (this.state.latitude !== null) {
@@ -150,6 +156,8 @@ export default class BranchList extends Component {
 				return;
 			}
 
+			// prepare locations array to be used for NearestCity
+			// method
 			let locations = branchList.map(branch => [
 				branch.branchDesc,
 				branch.branchYaxis,
@@ -157,6 +165,9 @@ export default class BranchList extends Component {
 				branch
 			]);
 
+			// NearestCity method takes current location
+			// and an array of locations and returns
+			// the nearest one.
 			let closestLocation = NearestCity(
 				parseFloat(this.state.latitude),
 				parseFloat(this.state.longitude),
@@ -165,13 +176,17 @@ export default class BranchList extends Component {
 
 			console.log("Closest location: ", closestLocation);
 
+			// update the state accordinly
 			this.setState({
 				sections: [
 					{ title: "Nearby", data: [closestLocation[3]] },
 					{ title: "Our other locations", data: branchList }
 				]
 			});
-		} else {
+		}
+		// in case of no current location, update the state
+		// with the only section of branches
+		else {
 			this.setState({
 				sections: [{ title: "", data: this.state.branchList }]
 			});

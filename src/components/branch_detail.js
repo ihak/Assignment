@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 
 export default class BranchDetail extends Component {
+	// set the navigation title
 	static navigationOptions = ({ navigation }) => {
 		return {
 			title: navigation.getParam("title", "Location Detail")
