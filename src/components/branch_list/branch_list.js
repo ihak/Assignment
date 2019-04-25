@@ -178,6 +178,7 @@ export default class BranchList extends Component {
 
 			// update the state accordinly
 			this.setState({
+				refresh: true,
 				sections: [
 					{ title: "Nearby", data: [closestLocation[3]] },
 					{ title: "Our other locations", data: branchList }
@@ -188,6 +189,7 @@ export default class BranchList extends Component {
 		// with the only section of branches
 		else {
 			this.setState({
+				refresh: true,
 				sections: [{ title: "", data: this.state.branchList }]
 			});
 		}
