@@ -15,6 +15,7 @@ export default class BranchList extends Component {
 
 		// Set initial state of the component
 		this.state = {
+			refresh: false,
 			sections: [{ title: "Loading...", data: [] }],
 			branchList: [],
 			nearest: [],
@@ -30,35 +31,9 @@ export default class BranchList extends Component {
 		// Fetch branch list from webservice
 		this.fetchBranchList().then(branchList => {
 			console.log(branchList);
-
-			// If no branches present exit the function
-			if (branchList.length <= 0) {
-				return;
-			}
-
-			// create locations array from branchList array to find the 
-			// nearest branch
-			let locations = branchList.map(branch => [
-				branch.branchDesc,
-				branch.branchYaxis,
-				branch.branchXaxis,
-				branch
-			]);
-
-			let closestLocation = NearestCity(
-				parseFloat(this.state.latitude),
-				parseFloat(this.state.longitude),
-				locations
+			this.setState({ branchList }, () =>
+				this.calculateNearestLocation()
 			);
-
-			console.log("Closest location: ", closestLocation);
-
-			this.setState({
-				sections: [
-					{ title: "Nearby", data: [closestLocation[3]] },
-					{ title: "Our other locations", data: branchList }
-				]
-			});
 		});
 
 		this.getCurrentLocation();
@@ -68,6 +43,7 @@ export default class BranchList extends Component {
 		return (
 			<SectionList
 				style={styles.container}
+				extraData={this.state.refresh}
 				renderItem={({ item, index, section }) => (
 					<ListItem
 						item={item}
@@ -143,12 +119,16 @@ export default class BranchList extends Component {
 			position => {
 				console.log("Retrieved the current location");
 
-				// Save the location in state
-				this.setState({
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude,
-					error: null
-				});
+				// Save the location in state and calculate
+				// nearest location afterwards.
+				this.setState(
+					{
+						latitude: position.coords.latitude,
+						longitude: position.coords.longitude,
+						error: null
+					},
+					() => this.calculateNearestLocation()
+				);
 			},
 			error => {
 				console.log("Error getting the location.");
@@ -156,6 +136,46 @@ export default class BranchList extends Component {
 			},
 			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
 		);
+	}
+
+	calculateNearestLocation() {
+		// If latitude is present calculate nearest location
+		if (this.state.latitude !== null) {
+			// create locations array from branchList array to find the
+			// nearest branch
+			let branchList = this.state.branchList;
+
+			// If no branches present exit the function
+			if (branchList.length <= 0) {
+				return;
+			}
+
+			let locations = branchList.map(branch => [
+				branch.branchDesc,
+				branch.branchYaxis,
+				branch.branchXaxis,
+				branch
+			]);
+
+			let closestLocation = NearestCity(
+				parseFloat(this.state.latitude),
+				parseFloat(this.state.longitude),
+				locations
+			);
+
+			console.log("Closest location: ", closestLocation);
+
+			this.setState({
+				sections: [
+					{ title: "Nearby", data: [closestLocation[3]] },
+					{ title: "Our other locations", data: branchList }
+				]
+			});
+		} else {
+			this.setState({
+				sections: [{ title: "", data: this.state.branchList }]
+			});
+		}
 	}
 }
 
